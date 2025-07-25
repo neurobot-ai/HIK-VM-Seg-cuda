@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ToolBoxItemData>
+    <name>YOLO_Seg</name>
+    <priority>100</priority>
+    <toolTip>YOLO_Seg</toolTip>
+</ToolBoxItemData>

@@ -1,0 +1,108 @@
+using System;
+using System.Text;
+using System.Windows.Forms;
+using Script.Methods;
+using System.Collections.Generic; // 必须添加，用于 List<>
+using System.Globalization;     // 必须添加，用于 CultureInfo
+
+/************************************
+Shell Module default code: using .NET Framwwork 4.6.1
+*************************************/
+public partial class UserScript : ScriptMethods, IProcessMethods
+{
+    // 模块默认字段
+    int processCount;
+
+    /// <summary>
+    /// 编译时初始化字段值。
+    /// </summary>
+    public void Init()
+    {
+        processCount = 0;
+    }
+
+    /// <summary>
+    /// 单次运行时进入的处理函数。
+    /// </summary>
+    public bool Process()
+    {
+        // 1. 从输入引脚 in0 获取字符串
+        string str = in0;
+        
+        // 2. 准备接收解析结果的变量
+        Script.Methods.RoiboxData[] roiBoxes;
+        float[] confidences;
+        int[] instanceIds;
+        string[] labels; // 修改点 1: 声明为 string[] 以接收字符串类型的标签
+
+        // 3. 调用更新后的解析函数
+        ParseString(str, out roiBoxes, out labels, out instanceIds, out confidences);
+
+        // 4. 将处理结果赋给输出变量
+        roibox = roiBoxes;
+        num = roiBoxes.Length;
+        label = labels;         // 修改点 2: 现在 label 输出的是 string[] 数组
+        conf = confidences;
+        out_instanceIds = instanceIds; 
+
+        return true;
+    }
+
+    /// <summary>
+    /// 解析字符串，并将类别ID直接转换为字符串形式。
+    /// </summary>
+    // 修改点 3: 函数签名移除了 classNames 输入参数
+    private void ParseString(string inputString, out Script.Methods.RoiboxData[] outRoiBoxes, out string[] outLabels, out int[] outInstanceIds, out float[] outConfidences)
+    {
+        var roiResults = new List<Script.Methods.RoiboxData>();
+        var labelResults = new List<string>(); // 用于存储最终的ID字符串
+        var instanceIdResults = new List<int>();
+        var confResults = new List<float>();
+
+        if (!string.IsNullOrWhiteSpace(inputString))
+        {
+            string[] records = inputString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string record in records)
+            {
+                string[] values = record.Split(',');
+                if (values.Length != 7) continue;
+
+                int classId = 0, instanceId = 0, x = 0, y = 0, width = 0, height = 0;
+                float confidence = 0.0F;
+
+                bool success = int.TryParse(values[0], out classId) &&
+                               int.TryParse(values[1], out instanceId) &&
+                               float.TryParse(values[2], NumberStyles.Any, CultureInfo.InvariantCulture, out confidence) &&
+                               int.TryParse(values[3], out x) &&
+                               int.TryParse(values[4], out y) &&
+                               int.TryParse(values[5], out width) &&
+                               int.TryParse(values[6], out height);
+
+                if (success)
+                {
+                    var roiBox = new Script.Methods.RoiboxData
+                    {
+                        CenterX = (float)(x + width / 2.0),
+                        CenterY = (float)(y + height / 2.0),
+                        Width = width,
+                        Height = height,
+                        Angle = 0.0F
+                    };
+                    
+                    // 修改点 4: 核心改动 - 直接将整数ID转换为字符串
+                    labelResults.Add(classId.ToString()); 
+
+                    roiResults.Add(roiBox);
+                    instanceIdResults.Add(instanceId);
+                    confResults.Add(confidence);
+                }
+            }
+        }
+
+        // 将列表转换为数组并通过 out 参数返回
+        outRoiBoxes = roiResults.ToArray();
+        outLabels = labelResults.ToArray();
+        outInstanceIds = instanceIdResults.ToArray();
+        outConfidences = confResults.ToArray();
+    }
+}

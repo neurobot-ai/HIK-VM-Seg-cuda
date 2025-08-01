@@ -21,7 +21,7 @@
 ![alt text](image/1.jpg)
 复制里面的内容，粘贴进“C盘”-"Program Files"-"VisionMaster4.4.0"-"Applications"-"PublicFile"-"x64"中
 ![alt text](image/2.jpg)
-2. 复制此文档所在文件夹中的"YOLO_Seg",粘贴进“C盘”-"Program Files"-"VisionMaster4.4.0"-"Applications"-"Module(sp)"-"x64"-"Collection"中。
+2. 复制此文档所在文件夹中的"YOLO_Seg"和"image_split",粘贴进“C盘”-"Program Files"-"VisionMaster4.4.0"-"Applications"-"Module(sp)"-"x64"-"Collection"中。
 ![alt text](image/3.jpg)
 ![alt text](image/4.jpg)
 

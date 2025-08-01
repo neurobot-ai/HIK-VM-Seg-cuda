@@ -46,6 +46,15 @@
                             <CurValue>D:\\Detection-Onnx\\Weights\\ball.onnx</CurValue>
                             <DefaultValue>D:\\Detection-Onnx\\Weights\\ball.onnx</DefaultValue>
                         </String>
+                        <Boolean Name="useGpu" NameSpace="Standard">
+                            <AlgorithmIndex>0</AlgorithmIndex>
+                            <CurValue>False</CurValue>
+                            <DefaultValue>False</DefaultValue>
+                            <Description>使用cuda</Description>
+                            <DisplayName>使用cuda</DisplayName>
+                            <Visibility>Expect</Visibility>
+                            <AccessMode>RW</AccessMode>
+                        </Boolean>
                     </Items>
                 </Category>
             </Categorys>
